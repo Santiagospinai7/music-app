@@ -14,13 +14,11 @@ const Player = ( { currentSong, isPlaying, setIsPlaying } ) => {
   const playSongHandler = () => {
     switch (isPlaying) {
       case true:
-        console.log("paused");
         audioRef.current.pause();
         setIsPlaying(!isPlaying);
         break;
     
       default:
-        console.log("playing");
         audioRef.current.play();
         setIsPlaying(!isPlaying);
         break;

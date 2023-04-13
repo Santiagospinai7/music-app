@@ -1,6 +1,6 @@
 import React from "react";
 
-const LibrarySong = ({ song, songs, setCurrentSong, setSongs }) => {
+const LibrarySong = ({ song, songs, setCurrentSong, setSongs, audioRef, isPlaying }) => {
   // Functions
   const songSelectHandler = () => {
     const selectedSong = song;
@@ -9,10 +9,17 @@ const LibrarySong = ({ song, songs, setCurrentSong, setSongs }) => {
     selectedSong.active = true;
     songs.map((song) => (song.id === selectedSong.id) ? song.active = true : song.active = false);
     
-    setSongs(songs);
+    // setSongs(songs);
     setCurrentSong(selectedSong);
 
-    console.log(selectedSong);
+    if (isPlaying) {
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.then((audio) => {
+          audioRef.current.play();
+        });
+      }
+    }
   };
 
   return(

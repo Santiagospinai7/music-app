@@ -1,9 +1,18 @@
 import React from "react";
 
-const LibrarySong = ({ song, setCurrentSong }) => {
+const LibrarySong = ({ song, songs, setCurrentSong, setSongs }) => {
   // Functions
   const songSelectHandler = () => {
-    setCurrentSong(song);
+    const selectedSong = song;
+
+    // Add Active State
+    selectedSong.active = true;
+    songs.map((song) => (song.id === selectedSong.id) ? song.active = true : song.active = false);
+    
+    setSongs(songs);
+    setCurrentSong(selectedSong);
+
+    console.log(selectedSong);
   };
 
   return(

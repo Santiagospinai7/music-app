@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon  } from "@fortawesome/react-fontawesome";
 import { faPlay, faAngleLeft, faAngleRight, faPause } from "@fortawesome/free-solid-svg-icons";
-
+import { playAudio } from "../util";
 
 const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, setIsPlaying, setCurrentSong, songs, setSongs } ) => {
+  // Use Effect
+  useEffect(() => {
+    songs.map((song) => (song.id === currentSong.id) ? song.active = true : song.active = false );
+    setSongs(songs);
+  }, [currentSong, setSongs, songs]);
+  
   // Functions
   const playSongHandler = () => {
     switch (isPlaying) {
@@ -42,14 +48,21 @@ const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, set
       if (((currentIndex - 1) % songs.length) === -1) {
         newIndex = songs.length - 1;
         setCurrentSong(songs[newIndex]);
-        updateActiveLibraryHandler(newIndex)
+        playAudio(isPlaying, audioRef);
+        // updateActiveLibraryHandler(newIndex)
         // The return helps to avoid the next line of code to be executed
         return;
       }
       newIndex = (newIndex - 1) % songs.length;
       setCurrentSong(songs[newIndex]);
     }
-    updateActiveLibraryHandler(newIndex)
+    // updateActiveLibraryHandler(newIndex)
+    playAudio(isPlaying, audioRef);
+  };
+
+  // Add the styles
+  const trackAnim = {
+    transform: `translateX(${songInfo.animationPercentage}%)`
   };
 
   // const updateActiveLibraryHandler = (index) => {
@@ -70,24 +83,27 @@ const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, set
   //   setSongs(newSongs);
   // };
 
-  const updateActiveLibraryHandler = (index) => {
-    const nextPrev = songs[index];
-    songs.map((song) => (song.id === nextPrev.id) ? song.active = true : song.active = false );
-    setSongs(songs);
-  };
+  // const updateActiveLibraryHandler = (index) => {
+  //   const nextPrev = songs[index];
+  //   songs.map((song) => (song.id === nextPrev.id) ? song.active = true : song.active = false );
+  //   setSongs(songs);
+  // };
 
   return(
     <div className="player">
       <div className="time-control">
         <p>{ getTime(songInfo.currentTime) }</p>
-        <input 
-          min={0}
-          max={songInfo.duration || 0}
-          value={songInfo.currentTime}
-          onChange={dragHandler}
-          type="range" 
-        />
-        <p>{ getTime(songInfo.duration) }</p>
+        <div style={{background: `linear-gradient(to right, ${currentSong.color[0]}, ${currentSong.color[1]})`}} className="track">
+          <input 
+            min={0}
+            max={songInfo.duration || 0}
+            value={songInfo.currentTime}
+            onChange={dragHandler}
+            type="range" 
+          />
+          <div style={trackAnim} className="animate-track"></div>
+        </div>
+        <p>{ songInfo.duration ? getTime(songInfo.duration) : '0:00' }</p>
       </div>
       <div className="play-control">
         <FontAwesomeIcon onClick={() => skipTrackHandler("skip-back")} className="skip-back" size="2x" icon={faAngleLeft} />

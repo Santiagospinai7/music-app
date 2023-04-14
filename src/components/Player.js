@@ -3,7 +3,7 @@ import { FontAwesomeIcon  } from "@fortawesome/react-fontawesome";
 import { faPlay, faAngleLeft, faAngleRight, faPause } from "@fortawesome/free-solid-svg-icons";
 
 
-const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, setIsPlaying, setCurrentSong, songs } ) => {
+const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, setIsPlaying, setCurrentSong, songs, setSongs } ) => {
   // Functions
   const playSongHandler = () => {
     switch (isPlaying) {
@@ -32,21 +32,42 @@ const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, set
 
   const skipTrackHandler = (direction) => {
     let currentIndex = songs.findIndex((song) => song.id === currentSong.id);
+    let newIndex = currentIndex;
     if (direction === "skip-forward") {
-      // console.log(currentIndex);
-      setCurrentSong(songs[(currentIndex + 1) % songs.length]);
-      // console.log(currentIndex + 1);
+      newIndex = (newIndex + 1) % songs.length;
+      setCurrentSong(songs[newIndex]);
     }
+
     if (direction === "skip-back") {
-      console.log("skip-back");
-      const test = (currentIndex - 1) % songs.length
-      console.log(test);
-      if (test === -1) {
-        setCurrentSong(songs[songs.length - 1]);
+      if (((currentIndex - 1) % songs.length) === -1) {
+        newIndex = songs.length - 1;
+        setCurrentSong(songs[newIndex]);
+        updateActiveLibraryHandler(newIndex)
+        // The return helps to avoid the next line of code to be executed
         return;
       }
-      setCurrentSong(songs[(currentIndex - 1) % songs.length]);
+      newIndex = (newIndex - 1) % songs.length;
+      setCurrentSong(songs[newIndex]);
     }
+    updateActiveLibraryHandler(newIndex)
+  };
+
+  const updateActiveLibraryHandler = (index) => {
+    const nextPrev = songs[index];
+    const newSongs = songs.map((song) => {
+      if (song.id === nextPrev.id) {
+        return {
+          ...song,
+          active: true,
+        };
+      } else {
+        return {
+          ...song,
+          active: false,
+        };
+      }
+    });
+    setSongs(newSongs);
   };
 
   return(

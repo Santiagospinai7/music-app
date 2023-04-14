@@ -52,22 +52,28 @@ const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, set
     updateActiveLibraryHandler(newIndex)
   };
 
+  // const updateActiveLibraryHandler = (index) => {
+  //   const nextPrev = songs[index];
+  //   const newSongs = songs.map((song) => {
+  //     if (song.id === nextPrev.id) {
+  //       return {
+  //         ...song,
+  //         active: true,
+  //       };
+  //     } else {
+  //       return {
+  //         ...song,
+  //         active: false,
+  //       };
+  //     }
+  //   });
+  //   setSongs(newSongs);
+  // };
+
   const updateActiveLibraryHandler = (index) => {
     const nextPrev = songs[index];
-    const newSongs = songs.map((song) => {
-      if (song.id === nextPrev.id) {
-        return {
-          ...song,
-          active: true,
-        };
-      } else {
-        return {
-          ...song,
-          active: false,
-        };
-      }
-    });
-    setSongs(newSongs);
+    songs.map((song) => (song.id === nextPrev.id) ? song.active = true : song.active = false );
+    setSongs(songs);
   };
 
   return(

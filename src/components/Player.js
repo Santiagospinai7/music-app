@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon  } from "@fortawesome/react-fontawesome";
 import { faPlay, faAngleLeft, faAngleRight, faPause } from "@fortawesome/free-solid-svg-icons";
-import { playAudio } from "../util";
 
 const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, setIsPlaying, setCurrentSong, songs, setSongs } ) => {
   // Use Effect
@@ -32,32 +31,34 @@ const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, set
   };
 
   const dragHandler = (e) => {
+    console.log(``)
+    console.log(``)
     audioRef.current.currentTime = e.target.value;
     setSongInfo({ ...songInfo, currentTime: e.target.value });
   };
 
-  const skipTrackHandler = (direction) => {
+  const skipTrackHandler = async (direction) => {
     let currentIndex = songs.findIndex((song) => song.id === currentSong.id);
     let newIndex = currentIndex;
     if (direction === "skip-forward") {
       newIndex = (newIndex + 1) % songs.length;
-      setCurrentSong(songs[newIndex]);
+      await setCurrentSong(songs[newIndex]);
     }
 
     if (direction === "skip-back") {
       if (((currentIndex - 1) % songs.length) === -1) {
         newIndex = songs.length - 1;
-        setCurrentSong(songs[newIndex]);
-        playAudio(isPlaying, audioRef);
+        await setCurrentSong(songs[newIndex]);
+        if (isPlaying) audioRef.current.play();
         // updateActiveLibraryHandler(newIndex)
         // The return helps to avoid the next line of code to be executed
         return;
       }
       newIndex = (newIndex - 1) % songs.length;
-      setCurrentSong(songs[newIndex]);
+      await setCurrentSong(songs[newIndex]);
     }
     // updateActiveLibraryHandler(newIndex)
-    playAudio(isPlaying, audioRef);
+    if (isPlaying) audioRef.current.play();
   };
 
   // Add the styles

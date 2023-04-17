@@ -1,14 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon  } from "@fortawesome/react-fontawesome";
 import { faPlay, faAngleLeft, faAngleRight, faPause } from "@fortawesome/free-solid-svg-icons";
 
 const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, setIsPlaying, setCurrentSong, songs, setSongs } ) => {
-  // Use Effect
-  useEffect(() => {
-    songs.map((song) => (song.id === currentSong.id) ? song.active = true : song.active = false );
-    setSongs(songs);
-  }, [currentSong, setSongs, songs]);
-  
   // Functions
   const playSongHandler = () => {
     switch (isPlaying) {
@@ -43,6 +37,7 @@ const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, set
     if (direction === "skip-forward") {
       newIndex = (newIndex + 1) % songs.length;
       await setCurrentSong(songs[newIndex]);
+      // updateActiveLibraryHandler(newIndex);
     }
 
     if (direction === "skip-back") {
@@ -50,15 +45,15 @@ const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, set
         newIndex = songs.length - 1;
         await setCurrentSong(songs[newIndex]);
         if (isPlaying) audioRef.current.play();
-        // updateActiveLibraryHandler(newIndex)
+        updateActiveLibraryHandler(newIndex);
         // The return helps to avoid the next line of code to be executed
         return;
       }
       newIndex = (newIndex - 1) % songs.length;
       await setCurrentSong(songs[newIndex]);
     }
-    // updateActiveLibraryHandler(newIndex)
     if (isPlaying) audioRef.current.play();
+    updateActiveLibraryHandler(newIndex);
   };
 
   // Add the styles
@@ -66,29 +61,11 @@ const Player = ( { audioRef,  setSongInfo, songInfo, currentSong, isPlaying, set
     transform: `translateX(${songInfo.animationPercentage}%)`
   };
 
-  // const updateActiveLibraryHandler = (index) => {
-  //   const nextPrev = songs[index];
-  //   const newSongs = songs.map((song) => {
-  //     if (song.id === nextPrev.id) {
-  //       return {
-  //         ...song,
-  //         active: true,
-  //       };
-  //     } else {
-  //       return {
-  //         ...song,
-  //         active: false,
-  //       };
-  //     }
-  //   });
-  //   setSongs(newSongs);
-  // };
-
-  // const updateActiveLibraryHandler = (index) => {
-  //   const nextPrev = songs[index];
-  //   songs.map((song) => (song.id === nextPrev.id) ? song.active = true : song.active = false );
-  //   setSongs(songs);
-  // };
+  const updateActiveLibraryHandler = (index) => {
+    const nextPrev = songs[index];
+    songs.map((song) => (song.id === nextPrev.id) ? song.active = true : song.active = false );
+    setSongs(songs);
+  };
 
   return(
     <div className="player">
